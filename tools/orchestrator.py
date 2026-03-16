@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from dotenv import load_dotenv
 from parse_pdf     import parse_pdf
-from db_store      import get_status, insert_invoice, update_pushed, update_pdf_path, update_error
+from db_store      import init_db, get_status, insert_invoice, update_pushed, update_pdf_path, update_error
 from zoho_push     import push_invoice
 from generate_pdf  import download_invoice_pdf
 from rename_source import rename_source_file
@@ -116,6 +116,7 @@ def process_pdf(pdf_path: str) -> tuple:
 
 
 def run():
+    init_db()
     print("=" * 60)
     print("Zoho Invoice Pipeline — Starting")
     print(f"Input folder: {INPUT_FOLDER}")

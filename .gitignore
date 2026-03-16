@@ -26,3 +26,17 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Next.js
+web/frontend/.next/
+web/frontend/node_modules/
+web/frontend/.env.local
+
+# Web backend secrets
+web/backend/.env
+
+# User data directories
+data/users/
+
+# Web DB
+web.db

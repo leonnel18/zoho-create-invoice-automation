@@ -19,6 +19,26 @@ def _conn() -> sqlite3.Connection:
     return sqlite3.connect(DB_PATH)
 
 
+def init_db() -> None:
+    """Create the invoices table if it doesn't exist yet."""
+    with _conn() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS invoices (
+                id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_file     TEXT UNIQUE,
+                invoice_date    TEXT,
+                customer_name   TEXT DEFAULT 'Generic',
+                items_json      TEXT,
+                zoho_invoice_id TEXT DEFAULT NULL,
+                pdf_output_path TEXT DEFAULT NULL,
+                status          TEXT CHECK(status IN ('pending','pushed','error')) DEFAULT 'pending',
+                error_message   TEXT DEFAULT NULL,
+                processed_at    TEXT DEFAULT NULL
+            )
+        """)
+        conn.commit()
+
+
 def record_exists(source_file: str) -> bool:
     with _conn() as conn:
         row = conn.execute(

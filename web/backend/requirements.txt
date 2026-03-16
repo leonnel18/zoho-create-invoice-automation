@@ -1,0 +1,10 @@
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+sqlalchemy==2.0.36
+pyjwt[crypto]==2.10.0
+bcrypt==4.2.1
+cryptography==43.0.3
+watchdog==6.0.0
+python-multipart==0.0.17
+python-dotenv==1.0.1
+aiofiles==24.1.0
