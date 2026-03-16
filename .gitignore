@@ -1,0 +1,28 @@
+# Environment — never commit credentials
+.env
+
+# Database — contains real invoice records
+*.db
+*.db-shm
+*.db-wal
+
+# Processed files — may contain customer data
+archive/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Temp pipeline files
+.tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
