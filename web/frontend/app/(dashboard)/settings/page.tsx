@@ -271,6 +271,36 @@ export default function SettingsPage() {
               placeholder="Generic"
             />
           </div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ fontWeight: 500, color: "var(--text)", fontSize: "0.9rem" }}>
+                Deduplication
+              </div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--muted)", marginTop: "0.25rem" }}>
+                Skip invoices already pushed for the same PDF + customer + date
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => set("dedup_enabled")(!form.dedup_enabled)}
+              style={{
+                width: 48, height: 26, borderRadius: 13,
+                background: form.dedup_enabled !== false ? "var(--green)" : "var(--border-hi)",
+                border: "none", cursor: "pointer",
+                position: "relative", transition: "background 0.2s", flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute", top: 3,
+                  left: form.dedup_enabled !== false ? 25 : 3,
+                  width: 20, height: 20, borderRadius: "50%",
+                  background: "white", transition: "left 0.2s",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                }}
+              />
+            </button>
+          </div>
         </Section>
 
         <Section title="Folder Watcher (Desktop only)">

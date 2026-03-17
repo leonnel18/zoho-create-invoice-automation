@@ -104,6 +104,7 @@ async def upload_and_run(
             "INPUT_FOLDER":  input_dir,
             "OUTPUT_FOLDER": output_dir,
             "DB_PATH":       f"{tmp_dir}/invoices.db",
+            "DEDUP_ENABLED": "false" if (s and s.dedup_enabled is False) else "true",
         },
     )
     return JobStarted(job_id=job_id)

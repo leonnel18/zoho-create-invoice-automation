@@ -12,6 +12,7 @@ class SettingsRead(BaseModel):
     db_path:           str
     default_item_rate: float
     default_customer:  str
+    dedup_enabled:     bool
     watch_enabled:     bool
     last_watch_event:  str | None
 
@@ -29,4 +30,5 @@ class SettingsUpdate(BaseModel):
     db_path:            str | None = None
     default_item_rate:  float | None = None
     default_customer:   str | None = None
+    dedup_enabled:      bool | None = None
     watch_enabled:      bool | None = None

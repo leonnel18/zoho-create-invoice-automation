@@ -24,6 +24,7 @@ class UserSettings(Base):
     # Pipeline defaults
     default_item_rate = Column(Float, default=1.0)
     default_customer  = Column(String, default="Generic")
+    dedup_enabled     = Column(Boolean, default=True)
 
     # Watcher state
     watch_enabled    = Column(Boolean, default=True)

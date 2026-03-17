@@ -220,20 +220,18 @@ export default function InvoicesPage() {
                       </td>
                       <td style={{ padding: "0.75rem 1rem" }}>
                         {inv.pdf_output_path ? (
-                          <a
-                            href={invoicesApi.pdfUrl(inv.id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <button
+                            onClick={() => invoicesApi.downloadPdf(inv.id, `${inv.customer_name}_${inv.invoice_date}.pdf`).catch((e) => alert(e.message))}
                             style={{
                               display: "inline-flex", alignItems: "center", gap: "0.25rem",
                               padding: "0.25rem 0.625rem", borderRadius: 6,
                               background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)",
                               color: "var(--accent-hi)", fontSize: "0.75rem", fontWeight: 600,
-                              textDecoration: "none", whiteSpace: "nowrap",
+                              cursor: "pointer", whiteSpace: "nowrap",
                             }}
                           >
                             ↓ PDF
-                          </a>
+                          </button>
                         ) : (
                           <span style={{ color: "var(--muted)", fontSize: "0.75rem" }}>—</span>
                         )}

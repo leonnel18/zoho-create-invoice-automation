@@ -146,7 +146,7 @@ def parse_pdf(pdf_path: str) -> list:
     for (customer_name, date_str), items in buckets.items():
         # Sanitize customer name for use as part of DB key
         safe_name   = re.sub(r"[^a-zA-Z0-9 _\-]", "", customer_name).strip()
-        source_file = f"{pdf_basename}::{safe_name}"
+        source_file = f"{pdf_basename}::{safe_name}::{date_str}"
 
         invoices.append({
             "date":          date_str,

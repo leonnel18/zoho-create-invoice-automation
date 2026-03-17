@@ -29,6 +29,7 @@ def _read_settings(s: UserSettings) -> dict:
         "db_path":            s.db_path,
         "default_item_rate":  s.default_item_rate,
         "default_customer":   s.default_customer,
+        "dedup_enabled":      s.dedup_enabled if s.dedup_enabled is not None else True,
         "watch_enabled":      s.watch_enabled,
         "last_watch_event":   s.last_watch_event,
     }
@@ -61,6 +62,7 @@ def update_settings(
     if body.db_path            is not None: s.db_path            = body.db_path
     if body.default_item_rate  is not None: s.default_item_rate  = body.default_item_rate
     if body.default_customer   is not None: s.default_customer   = body.default_customer
+    if body.dedup_enabled      is not None: s.dedup_enabled      = body.dedup_enabled
     if body.watch_enabled      is not None: s.watch_enabled      = body.watch_enabled
 
     # Encrypt sensitive fields only when new values are provided (not masked placeholders)

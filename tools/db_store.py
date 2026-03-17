@@ -7,7 +7,7 @@ Single source of truth for processing state.
 import os
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -83,7 +83,7 @@ def update_pushed(source_file: str, zoho_invoice_id: str):
             SET zoho_invoice_id = ?, status = 'pushed', processed_at = ?
             WHERE source_file = ?
             """,
-            (zoho_invoice_id, datetime.now().isoformat(), source_file),
+            (zoho_invoice_id, datetime.now(timezone.utc).isoformat(), source_file),
         )
         conn.commit()
 

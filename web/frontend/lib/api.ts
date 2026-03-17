@@ -69,6 +69,7 @@ export interface Settings {
   db_path: string;
   default_item_rate: number;
   default_customer: string;
+  dedup_enabled: boolean;
   watch_enabled: boolean;
 }
 
@@ -148,7 +149,23 @@ export const invoices = {
       `/api/invoices?page=${page}&page_size=${pageSize}`
     ),
   stats: () => request<InvoiceStats>("/api/invoices/stats"),
-  pdfUrl: (id: number) => `${BASE}/api/invoices/${id}/pdf`,
+  downloadPdf: async (id: number, filename: string) => {
+    const token = getToken();
+    const res = await fetch(`${BASE}/api/invoices/${id}/pdf`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as { detail?: string }).detail ?? "PDF not available");
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
 };
 
 // ── Watcher ──────────────────────────────────────────────────────

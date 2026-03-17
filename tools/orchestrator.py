@@ -50,8 +50,9 @@ def process_invoice(invoice: dict) -> bool:
     source_file   = invoice["source_file"]
     customer_name = invoice["customer_name"]
 
-    # Skip if already successfully pushed
-    if get_status(source_file) == "pushed":
+    # Skip if already successfully pushed (unless dedup disabled)
+    dedup_enabled = os.getenv("DEDUP_ENABLED", "true").lower() != "false"
+    if dedup_enabled and get_status(source_file) == "pushed":
         print(f"    [SKIP] Already pushed: {customer_name}")
         return True
 
