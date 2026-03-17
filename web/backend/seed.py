@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 _project_root = Path(__file__).parent.parent.parent
 load_dotenv(_project_root / ".env", override=False)
 
-from .database import Base, engine, SessionLocal   # noqa: E402
+from .database import Base, engine, SessionLocal  # noqa: E402
 from .models import User, UserSettings             # noqa: E402
 from .core.security import hash_password           # noqa: E402
 from .core.crypto import encrypt                   # noqa: E402
