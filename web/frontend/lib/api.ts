@@ -148,6 +148,7 @@ export const invoices = {
       `/api/invoices?page=${page}&page_size=${pageSize}`
     ),
   stats: () => request<InvoiceStats>("/api/invoices/stats"),
+  pdfUrl: (id: number) => `${BASE}/api/invoices/${id}/pdf`,
 };
 
 // ── Watcher ──────────────────────────────────────────────────────

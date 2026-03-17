@@ -111,7 +111,7 @@ async def upload_and_run(
 
 @router.get("/jobs", response_model=list[JobRead])
 def list_jobs(
-    limit: int = 20,
+    limit: int = 10,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

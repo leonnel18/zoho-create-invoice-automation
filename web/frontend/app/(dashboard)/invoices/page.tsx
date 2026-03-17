@@ -10,6 +10,56 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; dot: string }> =
   error:   { bg: "rgba(248,113,113,0.12)", color: "var(--red)",    dot: "dot-red"    },
 };
 
+// ── Payment details ───────────────────────────────────────────────────────────
+const GCASH = { name: "Gideon Noel Valera", number: "09625408076" };
+const BANK  = { bank: "Wise Pilipinas Inc.", name: "Gideon Noel Valera", account: "2005141027" };
+
+function MatchaModal({ onClose }: { onClose: () => void }) {
+  const [copied, setCopied] = useState<string | null>(null);
+  function copy(text: string, key: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(key);
+      setTimeout(() => setCopied(null), 2000);
+    });
+  }
+  const Row = ({ label, value, k }: { label: string; value: string; k: string }) => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.5rem 0", borderBottom: "1px solid var(--border)" }}>
+      <div>
+        <div style={{ fontSize: "0.6875rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text)", marginTop: "0.125rem" }}>{value}</div>
+      </div>
+      <button onClick={() => copy(value, k)} style={{ padding: "0.25rem 0.625rem", background: copied === k ? "rgba(34,211,165,0.15)" : "var(--surface)", border: "1px solid var(--border)", borderRadius: 6, color: copied === k ? "var(--green)" : "var(--muted)", fontSize: "0.75rem", cursor: "pointer", transition: "all 0.15s", flexShrink: 0, marginLeft: "0.75rem" }}>
+        {copied === k ? "✓ Copied" : "Copy"}
+      </button>
+    </div>
+  );
+  return (
+    <>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 99, backdropFilter: "blur(2px)" }} />
+      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 100, width: 380, background: "var(--card)", border: "1px solid var(--border)", borderRadius: 16, padding: "1.5rem", boxShadow: "0 24px 64px rgba(0,0,0,0.5)" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+          <div>
+            <div style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontWeight: 800, fontSize: "1.1rem", color: "var(--green)", letterSpacing: "-0.02em" }}>🍵 Buy me a Matcha</div>
+            <div style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.25rem" }}>If ZohoFlow saved you time, I&apos;d love a matcha!</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", fontSize: "1.125rem", cursor: "pointer", padding: "0 0.25rem", lineHeight: 1 }}>✕</button>
+        </div>
+        <div style={{ marginBottom: "1rem" }}>
+          <div style={{ fontSize: "0.7rem", color: "var(--green)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>GCash</div>
+          <Row label="Account Name" value={GCASH.name}   k="gcash-name" />
+          <Row label="Number"       value={GCASH.number} k="gcash-num" />
+        </div>
+        <div>
+          <div style={{ fontSize: "0.7rem", color: "var(--accent-hi)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Bank Transfer</div>
+          <Row label="Bank"           value={BANK.bank}    k="bank-name" />
+          <Row label="Account Name"   value={BANK.name}    k="bank-acct-name" />
+          <Row label="Account Number" value={BANK.account} k="bank-acct-num" />
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function InvoicesPage() {
   const [items, setItems] = useState<Invoice[]>([]);
   const [stats, setStats] = useState<InvoiceStats | null>(null);
@@ -17,6 +67,7 @@ export default function InvoicesPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "pending" | "pushed" | "error">("all");
+  const [showMatcha, setShowMatcha] = useState(false);
   const pageSize = 20;
 
   async function load(p: number) {
@@ -41,14 +92,29 @@ export default function InvoicesPage() {
 
   return (
     <div>
+      {showMatcha && <MatchaModal onClose={() => setShowMatcha(false)} />}
+
       {/* Header */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
-          Invoices
-        </h1>
-        <p style={{ color: "var(--muted)", marginTop: "0.25rem" }}>
-          All invoice records from the pipeline
-        </p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+        <div>
+          <h1 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
+            Invoices
+          </h1>
+          <p style={{ color: "var(--muted)", marginTop: "0.25rem" }}>
+            All invoice records from the pipeline
+          </p>
+        </div>
+        <button
+          onClick={() => setShowMatcha(true)}
+          style={{
+            padding: "0.5rem 1rem", background: "rgba(34,211,165,0.07)",
+            border: "1px solid rgba(34,211,165,0.2)", borderRadius: 8,
+            color: "var(--green)", fontSize: "0.8125rem", fontWeight: 600,
+            cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap",
+          }}
+        >
+          🍵 Buy me a Matcha
+        </button>
       </div>
 
       {/* Stats pills */}
@@ -90,7 +156,7 @@ export default function InvoicesPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--surface)" }}>
-                {["#", "Date", "Customer", "Status", "Zoho ID", "Processed At", "Error"].map((h) => (
+                {["#", "Date", "Customer", "Status", "Zoho ID", "Processed At", "Error", "PDF"].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -108,13 +174,13 @@ export default function InvoicesPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "3rem", color: "var(--muted)" }}>
+                  <td colSpan={8} style={{ textAlign: "center", padding: "3rem", color: "var(--muted)" }}>
                     <span className="animate-spin" style={{ display: "inline-block", width: 24, height: 24, border: "3px solid var(--border-hi)", borderTopColor: "var(--accent)", borderRadius: "50%" }} />
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "3rem", color: "var(--muted)", fontSize: "0.875rem" }}>
+                  <td colSpan={8} style={{ textAlign: "center", padding: "3rem", color: "var(--muted)", fontSize: "0.875rem" }}>
                     No invoices found
                   </td>
                 </tr>
@@ -151,6 +217,26 @@ export default function InvoicesPage() {
                       </td>
                       <td style={{ padding: "0.75rem 1rem", color: "var(--red)", fontSize: "0.75rem", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                         {inv.error_message ?? ""}
+                      </td>
+                      <td style={{ padding: "0.75rem 1rem" }}>
+                        {inv.pdf_output_path ? (
+                          <a
+                            href={invoicesApi.pdfUrl(inv.id)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: "inline-flex", alignItems: "center", gap: "0.25rem",
+                              padding: "0.25rem 0.625rem", borderRadius: 6,
+                              background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)",
+                              color: "var(--accent-hi)", fontSize: "0.75rem", fontWeight: 600,
+                              textDecoration: "none", whiteSpace: "nowrap",
+                            }}
+                          >
+                            ↓ PDF
+                          </a>
+                        ) : (
+                          <span style={{ color: "var(--muted)", fontSize: "0.75rem" }}>—</span>
+                        )}
                       </td>
                     </tr>
                   );
