@@ -144,30 +144,28 @@ export default function DashboardPage() {
       {/* 2-col grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
 
-        {/* Watcher status */}
-        <div className="card">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+        {/* Watcher status — desktop only */}
+        <div className="card" style={{ opacity: 0.45, filter: "grayscale(1)", pointerEvents: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
             <h2 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontWeight: 700, fontSize: "1rem" }}>Folder Watcher</h2>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: watchStatus?.enabled ? "var(--green)" : "var(--muted)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", color: "var(--muted)" }}>
               {statusDot}
-              {watchStatus?.enabled ? "Active" : "Inactive"}
+              Inactive
             </div>
+          </div>
+          <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginBottom: "0.75rem" }}>
+            Desktop only — not available in cloud mode
           </div>
           <div style={{ fontSize: "0.8125rem", color: "var(--muted)", lineHeight: 1.8 }}>
             <div>
               <span style={{ color: "var(--muted-hi)" }}>Folder: </span>
-              <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--accent-hi)" }}>
-                {watchStatus?.folder ?? "Not configured"}
-              </code>
+              <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>Not configured</code>
             </div>
             <div>
               <span style={{ color: "var(--muted-hi)" }}>Last event: </span>
-              {watchStatus?.last_event ? new Date(watchStatus.last_event).toLocaleString() : "Never"}
+              Never
             </div>
           </div>
-          <Link href="/settings" style={{ display: "inline-block", marginTop: "1rem", fontSize: "0.8125rem", color: "var(--accent-hi)", textDecoration: "none" }}>
-            Configure →
-          </Link>
         </div>
 
         {/* Quick actions */}

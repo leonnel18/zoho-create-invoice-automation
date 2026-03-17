@@ -127,53 +127,11 @@ export default function PipelinePage() {
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "2rem" }}>
-        <div>
-          <h1 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
-            Pipeline
-          </h1>
-          <p style={{ color: "var(--muted)", marginTop: "0.25rem" }}>Manually trigger and monitor your invoice runs</p>
-        </div>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-        {running && (
-          <button
-            onClick={handleStop}
-            style={{
-              padding: "0.75rem 1.25rem",
-              background: "rgba(248,113,113,0.1)",
-              color: "var(--red)",
-              border: "1px solid rgba(248,113,113,0.3)", borderRadius: 8,
-              fontFamily: "var(--font-syne, Syne, sans-serif)",
-              fontWeight: 700, fontSize: "0.9rem",
-              cursor: "pointer", transition: "background 0.15s",
-            }}
-          >
-            ■ Stop
-          </button>
-        )}
-        <button
-          onClick={handleRun}
-          disabled={running}
-          style={{
-            padding: "0.75rem 1.5rem",
-            background: running ? "var(--border-hi)" : "var(--accent)",
-            color: running ? "var(--muted)" : "white",
-            border: "none", borderRadius: 8,
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontWeight: 700, fontSize: "0.9rem",
-            cursor: running ? "not-allowed" : "pointer",
-            display: "flex", alignItems: "center", gap: "0.5rem",
-            transition: "background 0.15s",
-          }}
-        >
-          {running ? (
-            <>
-              <span className="animate-spin" style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", display: "inline-block" }} />
-              Running…
-            </>
-          ) : "▶ Run Now"}
-        </button>
-        </div>
+      <div style={{ marginBottom: "2rem" }}>
+        <h1 style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontSize: "1.75rem", fontWeight: 800, color: "var(--text)", letterSpacing: "-0.03em" }}>
+          Pipeline
+        </h1>
+        <p style={{ color: "var(--muted)", marginTop: "0.25rem" }}>Upload delivery receipt PDFs to create invoices in Zoho Books</p>
       </div>
 
       {error && (
