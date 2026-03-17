@@ -30,6 +30,9 @@ export default function PipelinePage() {
   const [activeJob, setActiveJob] = useState<Job | null>(null);
   const [running, setRunning] = useState(false);
   const [error, setError] = useState("");
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +69,32 @@ export default function PipelinePage() {
         setRunning(false);
       }
     }, 1500);
+  }
+
+  function addFiles(incoming: FileList | null) {
+    if (!incoming) return;
+    const pdfs = Array.from(incoming).filter((f) => f.name.toLowerCase().endsWith(".pdf"));
+    setUploadFiles((prev) => {
+      const names = new Set(prev.map((f) => f.name));
+      return [...prev, ...pdfs.filter((f) => !names.has(f.name))];
+    });
+  }
+
+  async function handleUpload() {
+    if (!uploadFiles.length) return;
+    setError("");
+    setRunning(true);
+    setActiveJob(null);
+    try {
+      const { job_id } = await pipelineApi.upload(uploadFiles);
+      setUploadFiles([]);
+      const job = await pipelineApi.status(job_id);
+      setActiveJob(job);
+      startPolling(job_id);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Upload failed");
+      setRunning(false);
+    }
   }
 
   async function handleRun() {
@@ -152,6 +181,81 @@ export default function PipelinePage() {
           {error}
         </div>
       )}
+
+      {/* PDF Upload dropzone */}
+      <div
+        className="card"
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files); }}
+        style={{
+          marginBottom: "1rem",
+          border: dragOver ? "1.5px dashed var(--accent)" : "1.5px dashed var(--border-hi)",
+          background: dragOver ? "rgba(59,130,246,0.05)" : undefined,
+          transition: "border-color 0.15s, background 0.15s",
+          cursor: "pointer",
+        }}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          multiple
+          style={{ display: "none" }}
+          onChange={(e) => addFiles(e.target.files)}
+        />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ fontSize: "1.5rem", opacity: 0.5 }}>📄</span>
+            <div>
+              <div style={{ fontWeight: 600, color: "var(--text)", fontSize: "0.9rem" }}>
+                {uploadFiles.length ? `${uploadFiles.length} PDF${uploadFiles.length > 1 ? "s" : ""} selected` : "Upload PDFs"}
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--muted)", marginTop: "0.125rem" }}>
+                {uploadFiles.length
+                  ? uploadFiles.map((f) => f.name).join(", ")
+                  : "Drag & drop or click to browse — cloud mode"}
+              </div>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
+            {uploadFiles.length > 0 && (
+              <button
+                onClick={() => setUploadFiles([])}
+                style={{
+                  padding: "0.5rem 0.875rem", background: "transparent",
+                  border: "1px solid var(--border-hi)", borderRadius: 7,
+                  color: "var(--muted)", fontSize: "0.8125rem", cursor: "pointer",
+                }}
+              >
+                Clear
+              </button>
+            )}
+            <button
+              onClick={handleUpload}
+              disabled={running || uploadFiles.length === 0}
+              style={{
+                padding: "0.5rem 1.25rem",
+                background: uploadFiles.length && !running ? "var(--accent)" : "var(--border-hi)",
+                color: uploadFiles.length && !running ? "white" : "var(--muted)",
+                border: "none", borderRadius: 7,
+                fontFamily: "var(--font-syne, Syne, sans-serif)",
+                fontWeight: 700, fontSize: "0.875rem",
+                cursor: uploadFiles.length && !running ? "pointer" : "not-allowed",
+                display: "flex", alignItems: "center", gap: "0.5rem",
+              }}
+            >
+              {running ? (
+                <>
+                  <span className="animate-spin" style={{ width: 13, height: 13, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", display: "inline-block" }} />
+                  Processing…
+                </>
+              ) : "Process PDFs"}
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "1rem", alignItems: "start" }}>
         {/* Job list */}

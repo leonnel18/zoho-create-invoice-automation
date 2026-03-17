@@ -9,6 +9,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import CLOUD_MODE, FRONTEND_URL
 from .database import Base, engine, SessionLocal
 from .routers import auth, settings, pipeline, invoices, watcher
 from .agents.folder_watcher import FolderWatcher
@@ -27,12 +28,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Base.metadata.create_all(bind=engine)
     log.info("Database tables ready")
 
-    # Start the multi-user folder watcher
+    # Start the multi-user folder watcher (desktop mode only)
     loop = asyncio.get_event_loop()
-    fw = FolderWatcher(db_factory=SessionLocal, loop=loop)
-    fw.start()
-    fw.load_all_active_users()
-    app.state.folder_watcher = fw
+    if not CLOUD_MODE:
+        fw = FolderWatcher(db_factory=SessionLocal, loop=loop)
+        fw.start()
+        fw.load_all_active_users()
+        app.state.folder_watcher = fw
+        log.info("Folder watcher started")
+    else:
+        app.state.folder_watcher = None
+        log.info("Cloud mode: folder watcher disabled")
 
     # Per-user Zoho token caches  {user_id: {"access_token": ..., "expires_at": ...}}
     app.state.zoho_token_caches: dict[int, dict] = {}
@@ -40,7 +46,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
 
     # ── Shutdown ─────────────────────────────────────────────────────────────
-    fw.stop()
+    if app.state.folder_watcher:
+        app.state.folder_watcher.stop()
     log.info("Shutdown complete")
 
 
@@ -56,8 +63,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        # Add your Vercel URL here when deploying:
-        # "https://your-app.vercel.app",
+        *([FRONTEND_URL] if FRONTEND_URL else []),
     ],
     allow_credentials=True,
     allow_methods=["*"],

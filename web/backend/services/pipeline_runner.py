@@ -34,6 +34,7 @@ async def run_pipeline_for_user(
     user_id: int,
     db,
     triggered_by: str = "manual",
+    env_overrides: dict | None = None,
 ) -> int:
     """
     Creates an InvoiceJob row, spawns orchestrator.py as a subprocess with
@@ -60,7 +61,7 @@ async def run_pipeline_for_user(
     db.refresh(job)
     job_id: int = job.id
 
-    # Build per-user environment
+    # Build per-user environment (env_overrides wins over settings values)
     env = {
         **os.environ,
         "INPUT_FOLDER":       s.input_folder or "",
@@ -73,6 +74,7 @@ async def run_pipeline_for_user(
         "ZOHO_REGION":        s.zoho_region or "com",
         "DEFAULT_ITEM_RATE":  str(s.default_item_rate or 1.0),
         "DEFAULT_CUSTOMER":   s.default_customer or "Generic",
+        **(env_overrides or {}),
     }
 
     orchestrator = str(TOOLS_DIR / "orchestrator.py")

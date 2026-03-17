@@ -102,6 +102,22 @@ export const pipeline = {
     request<{ job_id: number; message: string }>("/api/pipeline/run", {
       method: "POST",
     }),
+  upload: (files: File[]): Promise<{ job_id: number }> => {
+    const token = getToken();
+    const form = new FormData();
+    files.forEach((f) => form.append("files", f));
+    return fetch(`${BASE}/api/pipeline/upload`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    }).then(async (res) => {
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error((err as { detail?: string }).detail ?? "Upload failed");
+      }
+      return res.json() as Promise<{ job_id: number }>;
+    });
+  },
   status: (jobId: number) => request<Job>(`/api/pipeline/status/${jobId}`),
   stop:   (jobId: number) => request<{ ok: boolean; killed: boolean }>(`/api/pipeline/stop/${jobId}`, { method: "POST" }),
   jobs: () => request<Job[]>("/api/pipeline/jobs"),

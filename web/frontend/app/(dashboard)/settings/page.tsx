@@ -231,7 +231,10 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Folder Paths">
+        <Section title="Folder Paths (Desktop only)">
+          <div style={{ padding: "0.5rem 0.75rem", borderRadius: 8, background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", fontSize: "0.8125rem", color: "var(--accent)", marginBottom: "0.25rem" }}>
+            These paths apply when running the backend locally. In cloud mode, upload PDFs directly on the Pipeline page.
+          </div>
           <Field
             label="Input Folder (PDF watch folder)"
             value={form.input_folder ?? ""}
@@ -270,7 +273,10 @@ export default function SettingsPage() {
           </div>
         </Section>
 
-        <Section title="Folder Watcher">
+        <Section title="Folder Watcher (Desktop only)">
+          <div style={{ padding: "0.5rem 0.75rem", borderRadius: 8, background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", fontSize: "0.8125rem", color: "var(--accent)" }}>
+            Auto-watching requires the desktop app running locally. Not available in cloud mode.
+          </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div>
               <div style={{ fontWeight: 500, color: "var(--text)", fontSize: "0.9rem" }}>

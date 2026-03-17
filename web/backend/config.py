@@ -16,3 +16,7 @@ ALGORITHM    = "HS256"
 TOKEN_EXPIRE_HOURS = 24
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'web.db'}")
+
+# Cloud deployment flags
+CLOUD_MODE   = os.getenv("CLOUD_MODE", "false").lower() == "true"
+FRONTEND_URL = os.getenv("FRONTEND_URL", "")  # e.g. https://your-app.vercel.app
