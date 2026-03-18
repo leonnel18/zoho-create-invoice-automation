@@ -281,9 +281,9 @@ export default function PipelinePage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "1rem", alignItems: "start" }}>
+      <div className="pipeline-layout" style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "1rem", alignItems: "start" }}>
         {/* Job list */}
-        <div className="card" style={{ padding: "0.75rem" }}>
+        <div className="pipeline-history-panel card" style={{ padding: "0.75rem" }}>
           <div style={{ fontSize: "0.75rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.08em", padding: "0.25rem 0.75rem", marginBottom: "0.5rem" }}>
             Run History
           </div>

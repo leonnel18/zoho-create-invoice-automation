@@ -59,7 +59,7 @@ function MatchaModal({ onClose }: { onClose: () => void }) {
 // ── Stat card ─────────────────────────────────────────────────────────────────
 function StatCard({ label, value, color, sub }: { label: string; value: number | string; color: string; sub?: string }) {
   return (
-    <div className="card animate-fade-up" style={{ borderTop: `2px solid ${color}`, width: "calc(25% - 0.75rem)", minWidth: 140, flexShrink: 0 }}>
+    <div className="card animate-fade-up" style={{ borderTop: `2px solid ${color}`, minWidth: 130, flexShrink: 0, flex: 1 }}>
       <div style={{ fontSize: "0.75rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
         {label}
       </div>
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stats row */}
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+      <div className="stat-grid" style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
         <StatCard label="Total Invoices" value={stats?.total ?? "—"} color="var(--accent)" />
         <StatCard label="Pushed"         value={stats?.pushed ?? "—"} color="var(--green)" sub="to Zoho Books" />
         <StatCard label="Pending"        value={stats?.pending ?? "—"} color="var(--yellow)" />
@@ -142,7 +142,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 2-col grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+      <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
 
         {/* Watcher status — desktop only */}
         <div className="card" style={{ opacity: 0.45, filter: "grayscale(1)", pointerEvents: "none" }}>
@@ -195,6 +195,7 @@ export default function DashboardPage() {
               <Link href="/pipeline" style={{ color: "var(--accent-hi)", textDecoration: "none" }}>Run it now →</Link>
             </div>
           ) : (
+            <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--border)" }}>
@@ -221,6 +222,7 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
 

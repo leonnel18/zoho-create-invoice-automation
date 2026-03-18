@@ -166,7 +166,7 @@ export default function SettingsPage() {
             placeholder="Encrypted on save"
             hint="Leave blank to keep existing value"
           />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="settings-inner-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field
               label="Organization ID"
               value={form.zoho_org_id ?? ""}
@@ -256,7 +256,7 @@ export default function SettingsPage() {
         </Section>
 
         <Section title="Pipeline Defaults">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div className="settings-inner-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <Field
               label="Default Item Rate"
               value={String(form.default_item_rate ?? 1.0)}

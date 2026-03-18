@@ -99,3 +99,184 @@ input::placeholder, textarea::placeholder { color: var(--muted); }
 .dot-orange { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
 .dot-red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
 .dot-grey   { background: var(--muted); }
+
+/* ── Responsive / Mobile-first ─────────────────────────────────── */
+
+/* Safe-area + sidebar tokens */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sidebar-w:      220px;
+  --sidebar-w-rail: 64px;
+  --bottom-nav-h:   56px;
+}
+
+/* ── Sidebar rail mode (JS-controlled class on <aside>) ────────── */
+.sidebar-rail-mode {
+  width: var(--sidebar-w-rail) !important;
+  transition: width 0.2s ease;
+}
+.sidebar-rail-mode .sidebar-label,
+.sidebar-rail-mode .sidebar-logo-text,
+.sidebar-rail-mode .sidebar-footer-text,
+.sidebar-rail-mode .sidebar-matcha-label { display: none; }
+.sidebar-rail-mode .sidebar-nav-link { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
+.sidebar-rail-mode .sidebar-matcha-btn { width: 40px !important; padding: 0 !important; justify-content: center; margin: 0 auto; }
+.sidebar-rail-mode .sidebar-user-avatar { margin: 0 auto; }
+.sidebar-rail-mode .sidebar-toggle { align-self: center; }
+
+/* Main content transition */
+.main-content { transition: margin-left 0.2s ease; }
+.main-content.sidebar-rail { margin-left: var(--sidebar-w-rail); }
+
+/* ── Bottom nav base (hidden by default) ───────────────────────── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 60;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--sab);
+  height: calc(var(--bottom-nav-h) + var(--sab));
+  align-items: flex-start;
+}
+.bottom-nav-tab {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0.25rem;
+  min-height: 44px; min-width: 44px;
+  padding: 0.5rem 0;
+  text-decoration: none; background: transparent; border: none; cursor: pointer;
+  color: var(--muted);
+  font-size: 0.625rem; font-weight: 500;
+  letter-spacing: 0.03em; text-transform: uppercase;
+  transition: color 0.15s;
+}
+.bottom-nav-tab.active { color: var(--accent-hi); }
+.bottom-nav-icon { font-size: 1.125rem; line-height: 1; }
+.bottom-nav-label { font-size: 0.625rem; }
+
+/* ── Invoice detail panel ──────────────────────────────────────── */
+.invoice-detail-backdrop { display: none; }
+.invoice-detail-panel {
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* ── Mobile — max 767px ────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .sidebar-desktop { display: none !important; }
+  .bottom-nav { display: flex; }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    padding-top: calc(var(--sat) + 1rem) !important;
+    padding-bottom: calc(var(--bottom-nav-h) + var(--sab) + 1rem) !important;
+    max-width: 100vw !important;
+  }
+
+  /* Stat cards: 2-per-row grid */
+  .stat-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem !important;
+    flex-wrap: unset !important;
+  }
+  .stat-grid > * { width: auto !important; min-width: unset !important; flex-shrink: unset !important; }
+
+  /* Dashboard: single column */
+  .dashboard-grid { grid-template-columns: 1fr !important; }
+
+  /* Pipeline: stack vertically */
+  .pipeline-layout { flex-direction: column !important; display: flex !important; }
+  .pipeline-layout > .pipeline-history-panel {
+    width: 100% !important;
+    max-height: 200px;
+    overflow-y: auto;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Invoices table: hide non-essential columns */
+  .col-date, .col-zoho-id, .col-processed-at, .col-error { display: none !important; }
+
+  /* Invoice detail — slide-up sheet */
+  .invoice-detail-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 58;
+  }
+  .invoice-detail-panel {
+    position: fixed; left: 0; right: 0;
+    bottom: calc(var(--bottom-nav-h) + var(--sab));
+    top: 35%;
+    z-index: 59;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    animation: fade-up 0.25s ease forwards;
+  }
+
+  /* Settings: single column */
+  .settings-grid { grid-template-columns: 1fr !important; }
+  .settings-inner-grid { grid-template-columns: 1fr !important; }
+
+  /* Minimum touch targets */
+  button, a[href], [role="button"] { min-height: 44px; min-width: 44px; }
+}
+
+/* ── Galaxy Fold cover — max 280px ────────────────────────────── */
+@media (max-width: 280px) {
+  .main-content {
+    padding: 0.625rem !important;
+    padding-bottom: calc(var(--bottom-nav-h) + var(--sab) + 0.5rem) !important;
+  }
+  .stat-grid { gap: 0.5rem !important; }
+  .bottom-nav-label { display: none; }
+}
+
+/* ── Tablet / Foldable open — 768px–1023px ─────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar-desktop { display: flex; }
+  .bottom-nav { display: none; }
+
+  /* Auto-rail (no manual toggle needed at this breakpoint) */
+  .sidebar-desktop { width: var(--sidebar-w-rail) !important; }
+  .sidebar-desktop .sidebar-label,
+  .sidebar-desktop .sidebar-logo-text,
+  .sidebar-desktop .sidebar-footer-text,
+  .sidebar-desktop .sidebar-matcha-label { display: none; }
+  .sidebar-desktop .sidebar-nav-link { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
+  .sidebar-desktop .sidebar-matcha-btn { width: 40px !important; padding: 0 !important; justify-content: center; margin: 0 auto; }
+  .sidebar-desktop .sidebar-user-avatar { margin: 0 auto; }
+
+  .main-content { margin-left: var(--sidebar-w-rail) !important; }
+
+  /* Dashboard: 2-col bento */
+  .stat-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+  .stat-grid > * { width: auto !important; min-width: unset !important; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Invoices split-view */
+  .invoices-split { display: grid !important; grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Foldable posture: two vertical panes ──────────────────────── */
+@media (horizontal-viewport-segments: 2) {
+  .invoices-split {
+    display: grid !important;
+    grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);
+    gap: env(viewport-segment-left 1 0);
+  }
+  .pipeline-layout {
+    display: grid !important;
+    flex-direction: unset !important;
+    grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);
+  }
+}

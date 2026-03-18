@@ -31,30 +31,24 @@ function MatchaModal({ onClose }: { onClose: () => void }) {
   );
   return (
     <>
-      {/* Backdrop */}
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 99, backdropFilter: "blur(2px)" }} />
-      {/* Dialog */}
-      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 100, width: 340, background: "var(--card)", border: "1px solid var(--border)", borderRadius: 16, padding: "1.5rem", boxShadow: "0 24px 64px rgba(0,0,0,0.5)" }}>
+      <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 100, width: 340, maxWidth: "calc(100vw - 2rem)", background: "var(--card)", border: "1px solid var(--border)", borderRadius: 16, padding: "1.5rem", boxShadow: "0 24px 64px rgba(0,0,0,0.5)" }}>
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.25rem" }}>
           <div>
             <div style={{ fontFamily: "var(--font-syne, Syne, sans-serif)", fontWeight: 800, fontSize: "1.1rem", color: "var(--green)", letterSpacing: "-0.02em" }}>
               🍵 Buy me a Matcha
             </div>
             <div style={{ fontSize: "0.8rem", color: "var(--muted)", marginTop: "0.25rem" }}>
-              If ZohoFlow saved you time, I'd love a matcha!
+              If ZohoFlow saved you time, I&apos;d love a matcha!
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", fontSize: "1.125rem", cursor: "pointer", padding: "0 0.25rem", lineHeight: 1 }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "var(--muted)", fontSize: "1.125rem", cursor: "pointer", padding: "0 0.25rem", lineHeight: 1, minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
         </div>
-
-        {/* GCash */}
         <div style={{ marginBottom: "1rem" }}>
           <div style={{ fontSize: "0.7rem", color: "var(--green)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>GCash</div>
           <Row label="Account Name" value={MATCHA_GCASH.name} copyKey="gcash-name" />
           <Row label="Number" value={MATCHA_GCASH.number} copyKey="gcash-number" />
         </div>
-
-        {/* Bank */}
         <div>
           <div style={{ fontSize: "0.7rem", color: "var(--accent-hi)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Bank Transfer</div>
           <Row label="Bank" value={MATCHA_BANK.bank} copyKey="bank-name" />
@@ -66,11 +60,7 @@ function MatchaModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-interface NavItem {
-  href: string;
-  label: string;
-  icon: string;
-}
+interface NavItem { href: string; label: string; icon: string; }
 
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard",  icon: "▦" },
@@ -83,16 +73,19 @@ interface Props {
   userEmail?: string;
   displayName?: string;
   onLogout: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
+export default function Sidebar({ userEmail, displayName, onLogout, collapsed, onToggleCollapse }: Props) {
   const path = usePathname();
   const [showMatcha, setShowMatcha] = useState(false);
 
   return (
     <aside
+      className={`sidebar-desktop${collapsed ? " sidebar-rail-mode" : ""}`}
       style={{
-        width: 220,
+        width: collapsed ? "var(--sidebar-w-rail, 64px)" : "var(--sidebar-w, 220px)",
         minHeight: "100vh",
         background: "var(--surface)",
         borderRight: "1px solid var(--border)",
@@ -103,37 +96,62 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
         top: 0,
         left: 0,
         zIndex: 50,
+        overflowX: "hidden",
+        transition: "width 0.2s ease",
       }}
     >
-      {/* Logo */}
+      {/* Logo row */}
       <div
         style={{
-          padding: "0 1.25rem",
+          padding: collapsed ? "0 0.75rem" : "0 1.25rem",
           marginBottom: "2rem",
           display: "flex",
           alignItems: "center",
-          gap: "0.625rem",
+          justifyContent: collapsed ? "center" : "space-between",
+          gap: "0.5rem",
         }}
       >
-        <div
-          style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: "linear-gradient(135deg, var(--accent) 0%, var(--green) 100%)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "1rem", flexShrink: 0,
-          }}
-        >
-          ⚡
+        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+          <div
+            style={{
+              width: 32, height: 32, borderRadius: 8,
+              background: "linear-gradient(135deg, var(--accent) 0%, var(--green) 100%)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "1rem", flexShrink: 0,
+            }}
+          >
+            ⚡
+          </div>
+          <span
+            className="sidebar-logo-text"
+            style={{
+              fontFamily: "var(--font-syne, Syne, sans-serif)",
+              fontWeight: 800, fontSize: "1rem",
+              color: "var(--text)", letterSpacing: "-0.02em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ZohoFlow
+          </span>
         </div>
-        <span
-          style={{
-            fontFamily: "var(--font-syne, Syne, sans-serif)",
-            fontWeight: 800, fontSize: "1rem",
-            color: "var(--text)", letterSpacing: "-0.02em",
-          }}
-        >
-          ZohoFlow
-        </span>
+        {onToggleCollapse && (
+          <button
+            className="sidebar-toggle"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            style={{
+              background: "none", border: "none",
+              color: "var(--muted)", cursor: "pointer",
+              fontSize: "0.8rem", padding: "0.25rem",
+              minWidth: 28, minHeight: 28,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              borderRadius: 6, flexShrink: 0,
+              transition: "color 0.15s",
+            }}
+          >
+            {collapsed ? "→" : "←"}
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -144,6 +162,7 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
             <Link
               key={item.href}
               href={item.href}
+              className="sidebar-nav-link"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -157,15 +176,13 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
                 color: active ? "var(--text)" : "var(--muted-hi)",
                 background: active ? "var(--card)" : "transparent",
                 transition: "background 0.15s, color 0.15s",
-                borderLeft: active
-                  ? "2px solid var(--accent)"
-                  : "2px solid transparent",
+                borderLeft: active ? "2px solid var(--accent)" : "2px solid transparent",
               }}
             >
-              <span style={{ fontSize: "0.85rem", opacity: active ? 1 : 0.7, width: 18, textAlign: "center" }}>
+              <span style={{ fontSize: "0.85rem", opacity: active ? 1 : 0.7, width: 18, textAlign: "center", flexShrink: 0 }}>
                 {item.icon}
               </span>
-              {item.label}
+              <span className="sidebar-label" style={{ whiteSpace: "nowrap" }}>{item.label}</span>
             </Link>
           );
         })}
@@ -174,6 +191,7 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
       {/* Matcha button */}
       <div style={{ padding: "0 0.75rem", marginBottom: "0.5rem" }}>
         <button
+          className="sidebar-matcha-btn"
           onClick={() => setShowMatcha(true)}
           style={{
             width: "100%", padding: "0.5rem 0.75rem",
@@ -184,34 +202,27 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
             color: "var(--green)", fontSize: "0.8125rem", fontWeight: 500,
             transition: "background 0.15s, border-color 0.15s",
           }}
+          title="Buy me a Matcha"
           onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(34,211,165,0.13)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(34,211,165,0.4)"; }}
           onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(34,211,165,0.07)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(34,211,165,0.2)"; }}
         >
-          🍵 Buy me a Matcha
+          🍵 <span className="sidebar-matcha-label">Buy me a Matcha</span>
         </button>
       </div>
 
       {showMatcha && <MatchaModal onClose={() => setShowMatcha(false)} />}
 
       {/* User footer */}
-      <div
-        style={{
-          padding: "0.75rem",
-          borderTop: "1px solid var(--border)",
-          margin: "0 0.75rem",
-        }}
-      >
+      <div style={{ padding: "0.75rem", borderTop: "1px solid var(--border)", margin: "0 0.75rem" }}>
         <div
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.625rem",
-            padding: "0.5rem 0.75rem",
-            borderRadius: 8,
-            marginBottom: "0.5rem",
+            display: "flex", alignItems: "center", gap: "0.625rem",
+            padding: "0.5rem 0.25rem", borderRadius: 8, marginBottom: "0.5rem",
+            justifyContent: collapsed ? "center" : undefined,
           }}
         >
           <div
+            className="sidebar-user-avatar"
             style={{
               width: 28, height: 28, borderRadius: "50%",
               background: "linear-gradient(135deg, var(--accent), var(--green))",
@@ -221,47 +232,30 @@ export default function Sidebar({ userEmail, displayName, onLogout }: Props) {
           >
             {(displayName ?? userEmail ?? "?")[0].toUpperCase()}
           </div>
-          <div style={{ overflow: "hidden" }}>
-            <div
-              style={{
-                fontSize: "0.8125rem", fontWeight: 600,
-                color: "var(--text)", whiteSpace: "nowrap",
-                overflow: "hidden", textOverflow: "ellipsis",
-              }}
-            >
+          <div className="sidebar-footer-text" style={{ overflow: "hidden" }}>
+            <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {displayName ?? "User"}
             </div>
-            <div
-              style={{
-                fontSize: "0.6875rem", color: "var(--muted)",
-                whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-              }}
-            >
+            <div style={{ fontSize: "0.6875rem", color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {userEmail}
             </div>
           </div>
         </div>
-        <button
-          onClick={onLogout}
-          style={{
-            width: "100%", padding: "0.5rem",
-            background: "transparent",
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            color: "var(--muted)", fontSize: "0.8125rem",
-            cursor: "pointer", transition: "border-color 0.15s, color 0.15s",
-          }}
-          onMouseOver={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--red)";
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--red)";
-          }}
-          onMouseOut={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
-          }}
-        >
-          Sign out
-        </button>
+        {!collapsed && (
+          <button
+            onClick={onLogout}
+            style={{
+              width: "100%", padding: "0.5rem",
+              background: "transparent", border: "1px solid var(--border)",
+              borderRadius: 8, color: "var(--muted)", fontSize: "0.8125rem",
+              cursor: "pointer", transition: "border-color 0.15s, color 0.15s",
+            }}
+            onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--red)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--red)"; }}
+            onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)"; }}
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </aside>
   );
